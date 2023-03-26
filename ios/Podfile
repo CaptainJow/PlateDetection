@@ -22,6 +22,9 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
+require 'json'
+podfile_properties = JSON.parse(File.read('./Podfile.properties.json')) rescue {}
+
 target 'platedetect' do
   use_expo_modules!
   post_integrate do |installer|
@@ -43,6 +46,7 @@ target 'platedetect' do
     # we make it explicit here to aid in the React Native upgrade process.
     :hermes_enabled => flags[:hermes_enabled],
     :fabric_enabled => flags[:fabric_enabled],
+    :hermes_enabled => podfile_properties['expo.jsEngine'] == 'hermes',
     # Enables Flipper.
     #
     # Note that if you have use_frameworks! enabled, Flipper will not work and

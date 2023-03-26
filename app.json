@@ -1,9 +1,23 @@
 {
-  "name": "platedetect",
-  "displayName": "platedetect",
-  "extra": {
-    "eas": {
-      "projectId": "52aea526-4848-4158-9e3f-754362853092"
-    }
+  "expo": {
+    "name": "platedetect",
+    "slug": "platedetect",
+    "version": "1.0.0",
+    "extra": {
+      "eas": {
+        "projectId": "52aea526-4848-4158-9e3f-754362853092"
+      }
+    },
+    "runtimeVersion": "exposdk:48.0.0",
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/52aea526-4848-4158-9e3f-754362853092"
+    },
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "android": {},
+    "ios": {}
   }
 }
