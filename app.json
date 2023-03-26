@@ -1,0 +1,9 @@
+{
+  "name": "platedetect",
+  "displayName": "platedetect",
+  "extra": {
+    "eas": {
+      "projectId": "52aea526-4848-4158-9e3f-754362853092"
+    }
+  }
+}
