@@ -1,5 +1,5 @@
 import { NativeBaseProvider, Text, Center } from "native-base";
-import { View, Button, Alert, Image, Text as Text_1, TouchableOpacity, ScrollView, Pressable, ActivityIndicator } from 'react-native'
+import { View, Alert, Image, Text as Text_1, TouchableOpacity, ScrollView, Pressable, ActivityIndicator } from 'react-native'
 import { useState, useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import styles from "../../styles";
@@ -9,6 +9,7 @@ import api from "../../API/post";
 import uuid from 'uuid-random';
 import jwtDecode from 'jwt-decode';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import mime from 'react-native-mime-types';
 
 export default function Home(props) {
 
@@ -107,7 +108,7 @@ export default function Home(props) {
   const header = {
     headers: {
       Authorization: `Bearer ${AccessToken}`,
-      'Content-Type': 'multipart/form-data'
+      'content-type': 'multipart/form-data'
     }
   };
 
@@ -122,7 +123,7 @@ export default function Home(props) {
     const fileName = pickedImage[0].fileName ?? `${uuid()}.${fileExtension}`;
     bodyFormData.append('image_name', {
       uri: pickedImage[0].uri,
-      type: pickedImage[0].type,
+      type: mime.lookup(pickedImage[0].uri),
       name: fileName
     });
     try {
@@ -135,8 +136,8 @@ export default function Home(props) {
   
     } catch (error) {
       if (error.response) {
-        // console.error(error.response.status);
-        // console.error(error.response.data);
+        console.error(error.response.status);
+        console.error(error.response.data);
         setResponded(true);
         setError(true)
         // setErrorMessage(error.response.data.message);

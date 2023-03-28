@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  StyleSheet,
   Text,
   View,
   SafeAreaView,
@@ -8,14 +7,14 @@ import {
   ActivityIndicator,
   Image,
   TouchableOpacity,
-  SectionList,
-  StatusBar,
+
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import { selectAccessToken } from '../../features/userSlice';
 import styles from '../../styles';
 import api from "../../API/post";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 
 export default function SectionLists(props) {
   const AccessToken = useSelector(selectAccessToken);
@@ -32,7 +31,7 @@ export default function SectionLists(props) {
   const header = {
     headers: {
       Authorization: `Bearer ${AccessToken}`,
-      'Content-Type': 'multipart/form-data'
+      'content-type': 'multipart/form-data'
     }
   };
 
