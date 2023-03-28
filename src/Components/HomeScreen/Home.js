@@ -1,14 +1,14 @@
 import { NativeBaseProvider, Text, Center } from "native-base";
-import { View, Button, Alert, Image, Text as Text_1, TouchableOpacity, ScrollView, Pressable } from 'react-native'
+import { View, Button, Alert, Image, Text as Text_1, TouchableOpacity, ScrollView, Pressable, ActivityIndicator } from 'react-native'
 import { useState, useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import styles from "../../styles";
 import { useSelector } from 'react-redux';
 import { selectAccessToken, selectUser, logout } from "../../features/userSlice";
-import { Icon } from 'react-native-elements';
 import api from "../../API/post";
 import uuid from 'uuid-random';
 import jwtDecode from 'jwt-decode';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function Home(props) {
 
@@ -20,6 +20,9 @@ export default function Home(props) {
   const AccessToken = useSelector(selectAccessToken);
   const user = useSelector(selectUser);
   const [isImageVisible, setIsImageVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [responded, setResponded] = useState(false);
+  const [error, setError] = useState(false);
 
   // Check if the token is expired
   const expirationTime = AccessToken ? jwtDecode(AccessToken).exp : null;
@@ -112,7 +115,8 @@ export default function Home(props) {
 
 
   const handleSubmit = async () => {
-    setSentImage(true)
+    setIsLoading(true);
+    setSentImage(true);
     var bodyFormData = new FormData();
     const fileExtension = pickedImage[0].uri.split('.').pop();
     const fileName = pickedImage[0].fileName ?? `${uuid()}.${fileExtension}`;
@@ -121,29 +125,31 @@ export default function Home(props) {
       type: pickedImage[0].type,
       name: fileName
     });
-    api.post('api/object_detection_text',
-      bodyFormData
-      , header)
-      .then((response) => {
-        console.log(response);
-        setFileName(response.data.filename)
-        setTextList(response.data.text_list)
-
-      })
-      .catch((error) => {
-        if (error.response) {
-          console.error(error.response.status);
-          console.error(error.response.data);
-          // setErrorMessage(error.response.data.message);
-        } else if (error) {
-          console.error(error);
-          // setErrorMessage('Something went wrong.');
-        } else {
-          console.error(error);
-          // setErrorMessage('Something went wrong.');
-        }
-        // setIsLoading(false);
-      });
+    try {
+      const response = await api.post('api/object_detection_text', bodyFormData, header);
+      console.log(response);
+      setFileName(response.data.filename);
+      setTextList(response.data.text_list);
+      setError(false)
+      setResponded(true);
+  
+    } catch (error) {
+      if (error.response) {
+        // console.error(error.response.status);
+        // console.error(error.response.data);
+        setResponded(true);
+        setError(true)
+        // setErrorMessage(error.response.data.message);
+      } else if (error) {
+        console.error(error);
+        // setErrorMessage('Something went wrong.');
+      } else {
+        console.error(error);
+        // setErrorMessage('Something went wrong.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
 
@@ -168,52 +174,58 @@ export default function Home(props) {
             </Pressable>
             {/* <Button title='open camera' onPress={camerapressHandler} /> */}
           </View>
-          <View style={{marginTop: 15}}>
+          <View style={{ marginTop: 15 }}>
             <View style={styles.buttonContainer}>
               <Pressable style={styles.buttonBlack} >
                 <Text style={styles.textWhite} onPress={handleSubmit}>submit</Text>
               </Pressable>
             </View>
           </View>
-
           {sentImage ? (
             <>
-              {textlist[0] ? (
+              {isLoading && <ActivityIndicator size='large' />}
+
+              {responded && (
                 <>
-                  <View style={styles.container}>
-                    <TouchableOpacity onPress={handleToggleImage} style={styles.button}>
-                      <Text style={styles.buttonText}>Display result</Text>
-                      <Icon type='font-awesome' name='chevron-down' />
-                    </TouchableOpacity>
-                    {isImageVisible && (
-                      <>
-                        <View style={styles.imagepreviewcontainer}>
-                          <Image
-                            source={{ uri: imageSource }} // Replace with your own image source
-                            style={styles.imageStyle}
-                          />
+                  {error ? (
+                    <>
+                      <View style={styles.container}>
+                        <View style={styles.errorContainer}>
+                          <Text style={styles.errorText}>no number plate was detected in the sent image</Text>
+                          {/* <Icon type='font-awesome' name='exclamation-circle' /> */}
                         </View>
-                        <View style={styles.container}>
-                          {textlist.map((text, index) => (
-                            <View key={index} style={styles.numberPlate}>
-                              <Text style={styles.numberText}>{text}</Text>
+                      </View>
+                    </>
+                  ) :
+                    <>
+                      <View style={styles.container}>
+                        <TouchableOpacity onPress={handleToggleImage} style={styles.button}>
+                          <Text style={styles.buttonText}>Display result</Text>
+                          <MaterialCommunityIcons name="arrow-down-drop-circle" size={24} color="black" />
+                        </TouchableOpacity>
+                        {isImageVisible && (
+                          <>
+                            <View style={styles.imagepreviewcontainer}>
+                              <Image
+                                source={{ uri: imageSource }} // Replace with your own image source
+                                style={styles.imageStyle}
+                              />
                             </View>
-                          ))}
-                        </View>
-                      </>
-                    )}
-                  </View>
-
+                            <View style={styles.container}>
+                              {textlist.map((text, index) => (
+                                <View key={index} style={styles.numberPlate}>
+                                  <Text style={styles.numberText}>{text}</Text>
+                                </View>
+                              ))}
+                            </View>
+                          </>
+                        )}
+                      </View>
+                    </>
+                  }
                 </>
-              ) : <>
-                <View style={styles.container}>
-                  <View style={styles.errorContainer}>
-                    <Text style={styles.errorText}>no number plate was detected in the sent image</Text>
-                    {/* <Icon type='font-awesome' name='exclamation-circle' /> */}
-                  </View>
-                </View></>}
+              )}
             </>
-
           ) : <></>}
 
         </View>

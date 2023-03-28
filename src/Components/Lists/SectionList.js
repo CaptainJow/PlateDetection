@@ -15,7 +15,7 @@ import { useSelector } from 'react-redux';
 import { selectAccessToken } from '../../features/userSlice';
 import styles from '../../styles';
 import api from "../../API/post";
-import { Icon } from 'react-native-elements';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function SectionLists(props) {
   const AccessToken = useSelector(selectAccessToken);
@@ -75,7 +75,7 @@ export default function SectionLists(props) {
               <TouchableOpacity onPress={() => handleToggleImage(item.id)} style={styles.button}>
                 <Text style={styles.buttonText}>{item.created_at}</Text>
                 <Text style={styles.buttonText}>{item.id}</Text>
-                <Icon type='font-awesome' name='chevron-down' />
+                <MaterialCommunityIcons name="arrow-down-drop-circle" size={24} color="black" />
               </TouchableOpacity>
               {selectedItemId === item.id && (
                 <>
