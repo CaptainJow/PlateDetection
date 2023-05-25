@@ -12,6 +12,9 @@ You can find the built apk inside the ```/Builds``` folder , also if you want to
 - IOS exp://u.expo.dev/update/38b13a4d-3983-46a5-be9e-d00cb3b86d44
 - ANDROID exp://u.expo.dev/update/db2d6776-7b39-4b21-b841-c978e30f3c6c
 
+## Video
+you can see how it works by going to the  ```/TestVideo``` folder to view how it runs on android.
+
 ## Screenshots
 <p float="left">
  <img src="https://github.com/CaptainJow/PlateDetection/blob/master/screenshots/Screenshot_1680342845.png" height="500" />
